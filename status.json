@@ -1,8 +1,18 @@
 {
-  "generatedAtUtc": "2026-01-28T21:43:42Z",
+  "generatedAtUtc": "2026-01-28T21:46:14Z",
   "gatewayRunning": true,
   "recentWork": [
-    "Set up Philbin status pages",
-    "Calendar maintenance automation"
+    "Merge pull request #5 from alexstuartharris/feat/driveway-tetris",
+    "Enable Supabase shared mode (public key)",
+    "Add simple passcode lock",
+    "Add Driveway Tetris (shared car parking board)",
+    "Add Philbin Status app link",
+    "fix: Pages directory works for private repo",
+    "feat: dynamic directory listing on Pages landing (#3)",
+    "chore: bootstrap philbin repo structure + GitHub Pages",
+    "Update USER.md with operational preferences",
+    "Add assistant operating manual for Alex",
+    "Add Alex user profile",
+    "Initialize workspace identity/user"
   ]
 }
