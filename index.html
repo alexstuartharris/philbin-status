@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Philbin Status (Public Snapshot)</title>
+  <style>
+    :root { --bg:#0b0f14; --card:#121924; --text:#e7eef8; --muted:#9bb0c7; --ok:#35d07f; --warn:#ffcc66; --bad:#ff5c5c; --line:#223042; }
+    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); color:var(--text); }
+    header { padding: 22px 18px; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size:18px; letter-spacing:.2px; }
+    .sub { margin-top:6px; color:var(--muted); font-size:13px; }
+    main { padding: 18px; max-width: 980px; margin: 0 auto; }
+    .grid { display:grid; gap:12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 14px 12px; }
+    .label { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+    .value { margin-top:8px; font-size:15px; line-height:1.35; }
+    .pill { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.02); font-size:13px; }
+    .dot { width:9px; height:9px; border-radius:50%; background:var(--muted); }
+    .dot.ok { background:var(--ok); }
+    .dot.warn { background:var(--warn); }
+    .dot.bad { background:var(--bad); }
+    pre { margin:10px 0 0; padding:10px; border-radius:12px; background:rgba(0,0,0,.25); border:1px solid var(--line); overflow:auto; color:var(--text); font-size:12px; }
+    a { color:#86b7ff; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Philbin Status (Public Snapshot)</h1>
+    <div class="sub">Static snapshot. Updates only when the laptop is online and pushing updates.</div>
+  </header>
+
+  <main>
+    <div class="grid">
+      <div class="card">
+        <div class="label">Service</div>
+        <div class="value" id="service">Loading…</div>
+      </div>
+      <div class="card">
+        <div class="label">Last update (UTC)</div>
+        <div class="value" id="updated">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Recent work</div>
+        <div class="value" id="recent">—</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="label">Details</div>
+      <pre id="details">Loading…</pre>
+    </div>
+
+    <div class="sub" style="margin-top:10px">
+      If this stops updating, the laptop is likely asleep/offline, or GitHub Pages is cached.
+    </div>
+  </main>
+
+<script>
+  const STATUS_URL = './status.json';
+  function esc(s){ return (s??'').toString(); }
+  function setPill(el, state, text){
+    el.innerHTML = '';
+    const pill = document.createElement('span');
+    pill.className = 'pill';
+    const dot = document.createElement('span');
+    dot.className = 'dot ' + (state || '');
+    const t = document.createElement('span');
+    t.textContent = text;
+    pill.appendChild(dot); pill.appendChild(t);
+    el.appendChild(pill);
+  }
+  async function load(){
+    try{
+      const r = await fetch(STATUS_URL, { cache: 'no-store' });
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      const s = await r.json();
+      const ok = !!s.gatewayRunning;
+      setPill(document.getElementById('service'), ok ? 'ok' : 'bad', ok ? 'Up (as of last push)' : 'Down (as of last push)');
+      document.getElementById('updated').textContent = esc(s.generatedAtUtc || '—');
+      const recent = (s.recentWork || []).slice(0,8).map(x => '• ' + x).join('\n');
+      document.getElementById('recent').innerHTML = '<pre style="margin:0">' + esc(recent || '—') + '</pre>';
+      document.getElementById('details').textContent = JSON.stringify(s, null, 2);
+    } catch(e){
+      setPill(document.getElementById('service'), 'warn', 'Loaded, but status.json fetch failed');
+      document.getElementById('details').textContent = 'Error: ' + e;
+    }
+  }
+  load();
+  setInterval(load, 60000);
+</script>
+</body>
+</html>

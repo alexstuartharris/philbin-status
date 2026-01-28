@@ -1,0 +1,4 @@
+# Public-safe recent work lines (one per line)
+# Keep these generic (no names, addresses, phone numbers, exact locations, or credentials).
+Set up Philbin status pages
+Calendar maintenance automation
